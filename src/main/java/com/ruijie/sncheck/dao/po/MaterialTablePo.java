@@ -1,5 +1,7 @@
 package com.ruijie.sncheck.dao.po;
 
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -12,6 +14,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "material_table", schema = "ruijiesncheck", catalog = "")
+@EntityListeners(AuditingEntityListener.class)
 public class MaterialTablePo {
     private Integer id;
     private String materielCode;

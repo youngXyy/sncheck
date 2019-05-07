@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:mysql://118.25.156.61:3306/basketballfan?useUnicode=true&characterEncoding=UTF-8&useSSL=true
+    url: jdbc:mysql://118.25.156.61:3306/ruijiesncheck?useUnicode=true&characterEncoding=UTF-8&useSSL=true
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver

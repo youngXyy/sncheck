@@ -1,4 +1,4 @@
-package com.ruijie.sncheck.common;
+package com.ruijie.sncheck.common.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jdk.nashorn.internal.ir.annotations.Ignore;
