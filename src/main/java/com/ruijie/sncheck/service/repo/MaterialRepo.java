@@ -20,5 +20,11 @@ public interface MaterialRepo {
 
     Optional<MaterialTableDto> findByBoxCodeAndSnCode(String boxCode, String sncode);
 
-    List<MaterialTableDto> save(List<MaterialTableDto> list);
+    List<MaterialTableDto> batchsave(List<MaterialTableDto> list);
+
+    Optional<MaterialTableDto> findById(Integer id);
+
+    MaterialTableDto save(MaterialTableDto materialTableDto);
+
+    Boolean delete(MaterialTableDto materialTableDto);
 }

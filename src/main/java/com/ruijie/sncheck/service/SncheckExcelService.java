@@ -112,6 +112,6 @@ public class SncheckExcelService {
         if(list.size()==0){
             throw ApiException.badRequest("没有数据");
         }
-        return materialRepo.save(list);
+        return materialRepo.batchsave(list);
     }
 }

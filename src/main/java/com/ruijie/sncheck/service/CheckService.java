@@ -1,6 +1,7 @@
 package com.ruijie.sncheck.service;
 
 import com.ruijie.sncheck.common.error.ApiException;
+import com.ruijie.sncheck.common.util.CopySameObject;
 import com.ruijie.sncheck.service.entity.MaterialTableDto;
 import com.ruijie.sncheck.service.repo.MaterialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * CheckService
@@ -57,6 +59,19 @@ public class CheckService {
         return materialRepo.findByBoxCodeAndSnCode(boxCode,sncode).orElseThrow(()->ApiException.badRequest("不存在此任务"));
     }
 
+    public MaterialTableDto findById(Integer id){
+        return materialRepo.findById(id).orElseThrow(()->ApiException.badRequest("不存在"));
+    }
+
+    public MaterialTableDto editMaterial(MaterialTableDto dto){
+        MaterialTableDto materialTableDto = materialRepo.findById(dto.getId()).orElseThrow(()->ApiException.badRequest("不存在"));
+        CopySameObject.mergeObject(dto,materialTableDto);
+        return materialRepo.save(materialTableDto);
+    }
 
 
+    public Boolean deleteMaterial(Integer id) {
+        MaterialTableDto materialTableDto = materialRepo.findById(id).orElseThrow(()->ApiException.badRequest("不存在"));
+        return materialRepo.delete(materialTableDto);
+    }
 }

@@ -50,12 +50,31 @@ public class MaterialRepoJpa implements MaterialRepo {
     }
 
     @Override
-    public List<MaterialTableDto> save(List<MaterialTableDto> list) {
+    public List<MaterialTableDto> batchsave(List<MaterialTableDto> list) {
         List<MaterialTableDto> listDto = new ArrayList<>();
         List<MaterialTablePo> listPo = list.stream().map(d->CopyBean.simpleCopy(d,MaterialTablePo.class)).collect(Collectors.toList());
         for (MaterialTablePo po : listPo) {
             listDto.add(CopyBean.simpleCopy(materiaRepository.save(po),MaterialTableDto.class));
         }
         return listDto;
+    }
+
+    @Override
+    public Optional<MaterialTableDto> findById(Integer id) {
+        return materiaRepository.findById(id).map(p->CopyBean.simpleCopy(p,MaterialTableDto.class));
+    }
+
+    @Override
+    public MaterialTableDto save(MaterialTableDto materialTableDto) {
+        MaterialTablePo po = CopyBean.simpleCopy(materialTableDto,MaterialTablePo.class);
+        po=materiaRepository.save(po);
+        return CopyBean.simpleCopy(po,MaterialTableDto.class);
+    }
+
+    @Override
+    public Boolean delete(MaterialTableDto materialTableDto) {
+        MaterialTablePo po = CopyBean.simpleCopy(materialTableDto,MaterialTablePo.class);
+        materiaRepository.delete(po);
+        return true;
     }
 }

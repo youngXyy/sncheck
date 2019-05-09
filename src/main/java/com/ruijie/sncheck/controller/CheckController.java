@@ -58,4 +58,20 @@ public class CheckController {
         MaterialTableDto dto = checkService.findByBoxCodeAndSnCode(sncode,boxCode);
         return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
     }
+
+    @RequestMapping(value = "/edit/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    @PutMapping
+    public RespVo<MaterialVo> edit(@PathVariable("id") Integer id,@RequestParam MaterialVo vo){
+        MaterialTableDto dto = CopyBean.simpleCopy(vo,MaterialTableDto.class);
+        dto.setId(id);
+        return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(checkService.editMaterial(dto),MaterialVo.class));
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public RespVo<Boolean> delete(@PathVariable("id") Integer id){
+        Boolean result = checkService.deleteMaterial(id);
+        return RespVo.ok(result);
+    }
 }
