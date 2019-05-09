@@ -78,16 +78,16 @@
         <div class="SnTable" style="text-align: center">
             箱号：
             <div class="layui-inline">
-                <input class="layui-input" name="task" id="1" autocomplete="off">
+                <input class="layui-input" name="task" id="task" autocomplete="off">
             </div>
             Sn序列号：
             <div class="layui-inline">
-                <input class="layui-input" name="snCode" id="2" autocomplete="off">
+                <input class="layui-input" name="snCode" id="snCode" autocomplete="off">
             </div>
-            <button class="layui-btn">搜索</button>
+            <button class="layui-btn" onclick="toScan()">搜索</button>
         </div>
         <table class="layui-table" id="snT" lay-filter="">
-            <%--  <thead>
+             <thead>
               <th></th>
               <th>ID</th>
               <th>物料编码</th>
@@ -101,7 +101,7 @@
               <th>最后一次打印次数</th>
               <th>创建时间</th>
               <th>操作</th>
-              </thead>--%>
+              </thead>
             <tbody>
 
             </tbody>
@@ -120,80 +120,69 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
-<script>
+<script type="text/javascript">
     //JavaScript代码区域
     layui.use('element', function () {
         var element = layui.element;
     });
-
-    layui.use('upload', function () {
-        var $ = layui.jquery
-            , upload = layui.upload;
-        upload.render({ //允许上传的文件后缀
-            elem: '#importFile'
-            , url: '/sncheck/upload'
-            , accept: 'file' //普通文件
-            , exts: 'xls|xlsx' //只允许上传压缩文件
-            ,before:function (obj) {
-                layer.load(2);
-            }
-            , done: function (res) {
-                if (res.status = 201) {
+    function toScan() {
+        var task=$("#task").val();
+        var snCode=$("#snCode").val();
+        $.ajax({
+            url:"/meterialList",
+            type:"POST",
+            data:{
+                "task":task,
+                "snCode":snCode
+            },
+            beforeSend:function(obj){
+                layer.load(1);
+            },
+            success:function (res) {
+                if (res.status=200){
                     layer.closeAll('loading');
-                    layer.msg("导入成功！", {icon: 6, time: 1000,});
-                    layui.use('table', function () {
-                        var table = layui.table;
-                        table.render({
-                            elem: '#snT'
-                            , cols: [[
-                                {type: 'checkbox', fixed: 'left'}
-                                , {field: 'id', title: 'ID', fixed: 'left', unresize: true, sort: true}
-                                , {field: 'materielCode', title: '物料编码', edit: 'text'}
-                                , {field: 'task', title: '箱号', edit: 'text'}
-                                , {field: 'snCode', title: '属性号', edit: 'text', sort: true}
-                                , {field: 'printer', title: '打印人'}
-                                , {field: 'print_date', title: '打印时间'}
-                                , {field: 'print_times', title: '打印次数', sort: true}
-                                , {field: 'last_printer', title: '最后一次打印人'}
-                                , {field: 'last_print_date', title: '最以后一次打印时间'}
-                                , {field: 'last_print_time', title: '最后一次打印次数'}
-                                , {field: 'create_date', title: '创建时间'}
-                                , {fixed: 'right',title: '操作', toolbar: '#barDemo'}
-                            ]],
-                            data: res.body
-                        });
-                    });
+                    $("#snT tbody").empty();
+                    var data=res.body;
+                    $.each(data,function (index, item) {
+                        //序号
+                        var check = $("<td></td>");
+                        //Id
+                        var id = $("<td></td>").append(item.id);
+                        //物料编号
+                        var materielCode = $("<td></td>").append(item.materielCode);
+                        //任务
+                        var task = $("<td></td>").append(item.task);
+                        //箱号
+                        var boxCode = $("<td></td>").append(item.boxCode);
+                        //sn编码
+                        var snCode = $("<td></td>").append(item.snCode);
+                        //备料号
+                        var spareCode = $("<td></td>").append(item.spareCode);
+                        //属性号
+                        var attributeCode = $("<td></td>").append(item.attributeCode);
+                        //打印人
+                        var printer = $("<td></td>").append(item.printer);
+                        //打印时间
+                        var printDate = $("<td></td>").append(item.printDate);
+                           //打印次数
+                        var lastPrinter = $("<td></td>").append(item.lastPrinter);
+                           //最后一次打印人
+                        var printTimes = $("<td></td>").append(item.printTimes);
+                           //最以后一次打印时间
+                        var lastPrintDate = $("<td></td>").append(item.lastPrintDate);
+                            //最后一次打印次数
+                        var lastPrintTime = $("<td></td>").append(item.lastPrintTime);
+                            //创建时间
+                        var createDate = $("<td></td>").append(item.createDate);
+                        $("<tr></tr>").append(check).append(id).append(materielCode).append(task).append(boxCode).append(snCode).append(spareCode).append(attributeCode)
+                            .append(attributeCode).append(printer).append(printDate).append(lastPrinter).append(printTimes).append(lastPrintDate).append(lastPrintTime).append(createDate).appendTo("#snT tbody");
+                    })
+                    
                 }
             }
-            ,error: function(index, upload){
-                layer.closeAll('loading'); //关闭loading
-            }
-        });
-    });
-    layui.use('table', function() {
-        var table = layui.table;
-        //监听行工具事件
-        table.on('tool(test)', function(obj){
-            var data = obj.data;
-            //console.log(obj)
-            if(obj.event === 'del'){
-                layer.confirm('真的删除行么', function(index){
-                    obj.del();
-                    layer.close(index);
-                });
-            } else if(obj.event === 'edit'){
-                layer.prompt({
-                    formType: 2
-                    ,value: data.email
-                }, function(value, index){
-                    obj.update({
-                        email: value
-                    });
-                    layer.close(index);
-                });
-            }
-        });
-    });
+        })
+
+    }
 
 </script>
 

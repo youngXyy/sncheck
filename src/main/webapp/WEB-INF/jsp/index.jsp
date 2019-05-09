@@ -126,7 +126,7 @@
             , accept: 'file' //普通文件
             , exts: 'xls|xlsx' //只允许上传压缩文件
             ,before:function (obj) {
-                layer.load(2);
+                layer.load(1);
             }
             , done: function (res) {
                 if (res.status = 201) {
