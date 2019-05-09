@@ -141,14 +141,16 @@
                                 , {field: 'id', title: 'ID', fixed: 'left', unresize: true, sort: true}
                                 , {field: 'materielCode', title: '物料编码', edit: 'text'}
                                 , {field: 'task', title: '箱号', edit: 'text'}
-                                , {field: 'snCode', title: '属性号', edit: 'text', sort: true}
+                                , {field: 'snCode', title: 'sn编码', edit: 'text', sort: true}
+                                , {field: 'spareCode', title: '备料号', edit: 'text', sort: true}
+                                , {field: 'attributeCode', title: '属性号', edit: 'text', sort: true}
                                 , {field: 'printer', title: '打印人'}
-                                , {field: 'print_date', title: '打印时间'}
-                                , {field: 'print_times', title: '打印次数', sort: true}
-                                , {field: 'last_printer', title: '最后一次打印人'}
-                                , {field: 'last_print_date', title: '最以后一次打印时间'}
-                                , {field: 'last_print_time', title: '最后一次打印次数'}
-                                , {field: 'create_date', title: '创建时间'}
+                                , {field: 'printDate', title: '打印时间'}
+                                , {field: 'printTimes', title: '打印次数', sort: true}
+                                , {field: 'lastPrinter', title: '最后一次打印人'}
+                                , {field: 'lastPrintDate', title: '最以后一次打印时间'}
+                                , {field: 'lastPrintTime', title: '最后一次打印次数'}
+                                , {field: 'createDate', title: '创建时间'}
                                 , {fixed: 'right',title: '操作', toolbar: '#barDemo'}
                             ]],
                             data: res.body
