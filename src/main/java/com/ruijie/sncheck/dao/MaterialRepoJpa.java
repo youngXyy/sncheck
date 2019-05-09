@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,5 +47,15 @@ public class MaterialRepoJpa implements MaterialRepo {
     public Optional<MaterialTableDto> findByBoxCodeAndSnCode(String boxCode, String sncode) {
         Optional<MaterialTablePo> entity =  materiaRepository.findByBoxCodeAndSnCode(boxCode,sncode);
         return entity.map(p->CopyBean.simpleCopy(p,MaterialTableDto.class));
+    }
+
+    @Override
+    public List<MaterialTableDto> save(List<MaterialTableDto> list) {
+        List<MaterialTableDto> listDto = new ArrayList<>();
+        List<MaterialTablePo> listPo = list.stream().map(d->CopyBean.simpleCopy(d,MaterialTablePo.class)).collect(Collectors.toList());
+        for (MaterialTablePo po : listPo) {
+            listDto.add(CopyBean.simpleCopy(materiaRepository.save(po),MaterialTableDto.class));
+        }
+        return listDto;
     }
 }

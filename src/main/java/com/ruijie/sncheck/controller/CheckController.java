@@ -54,7 +54,7 @@ public class CheckController {
 
     @GetMapping
     @RequestMapping("/meterial/{sncode}/{boxCode}")
-    public RespVo<MaterialVo> findBySncode(@PathVariable("sncode") String sncode,@PathVariable("boxCode") String boxCode){
+    public RespVo<MaterialVo> findByBoxCodeAndSnCode(@PathVariable("sncode") String sncode,@PathVariable("boxCode") String boxCode){
         MaterialTableDto dto = checkService.findByBoxCodeAndSnCode(sncode,boxCode);
         return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
     }

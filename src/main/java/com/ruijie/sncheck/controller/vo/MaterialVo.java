@@ -24,6 +24,9 @@ public class MaterialVo {
     private String printTimes;
     private String lastPrinter;
     private Date lastPrintDate;
+    /**
+     * 打印次数
+     */
     private String lastPrintTime;
 
 }
