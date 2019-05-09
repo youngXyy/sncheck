@@ -17,22 +17,5 @@ spring:
       max-request-size: 20MB
 
 
-server:
-  port: 8080
-spring:
-  datasource:
-    url: jdbc:mysql:///basketballfan?useUnicode=true&characterEncoding=UTF-8&useSSL=true
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
-  mvc:
-    view:
-      prefix: /WEB-INF/jsp/
-      suffix: .jsp
-  servlet:
-    multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
 
 
