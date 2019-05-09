@@ -62,38 +62,46 @@
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
-                <li class="layui-nav-item layui-this" >
+                <li class="layui-nav-item">
                     <a  href="/page/import">Sn数据导入</a>
                 </li>
-                <li class="layui-nav-item ">
+                <li class="layui-nav-item layui-this">
                     <a  href="/page/toScan">Sn扫码</a>
                 </li>
             </ul>
         </div>
     </div>
 
+
     <div class="layui-body">
         <!-- 内容主体区域 -->
         <div class="SnTable" style="text-align: center">
-            <button type="button" class="layui-btn" id="importFile"><i class="layui-icon"></i>上传文件</button>
+            箱号：
+            <div class="layui-inline">
+                <input class="layui-input" name="task" id="1" autocomplete="off">
+            </div>
+            Sn序列号：
+            <div class="layui-inline">
+                <input class="layui-input" name="snCode" id="2" autocomplete="off">
+            </div>
+            <button class="layui-btn">搜索</button>
         </div>
-
-        <table class="layui-table" id="importT" lay-filter="">
-          <%--  <thead>
-            <th></th>
-            <th>ID</th>
-            <th>物料编码</th>
-            <th>箱号</th>
-            <th>属性号</th>
-            <th>打印人</th>
-            <th>打印时间</th>
-            <th>打印次数</th>
-            <th>最后一次打印人</th>
-            <th>最以后一次打印时间</th>
-            <th>最后一次打印次数</th>
-            <th>创建时间</th>
-            <th>操作</th>
-            </thead>--%>
+        <table class="layui-table" id="snT" lay-filter="">
+            <%--  <thead>
+              <th></th>
+              <th>ID</th>
+              <th>物料编码</th>
+              <th>箱号</th>
+              <th>属性号</th>
+              <th>打印人</th>
+              <th>打印时间</th>
+              <th>打印次数</th>
+              <th>最后一次打印人</th>
+              <th>最以后一次打印时间</th>
+              <th>最后一次打印次数</th>
+              <th>创建时间</th>
+              <th>操作</th>
+              </thead>--%>
             <tbody>
 
             </tbody>
@@ -101,6 +109,7 @@
         </table>
     </div>
 </div>
+
 <div class="layui-footer">
     <!-- 底部固定区域 -->
     © Ruijie
@@ -135,7 +144,7 @@
                     layui.use('table', function () {
                         var table = layui.table;
                         table.render({
-                            elem: '#importT'
+                            elem: '#snT'
                             , cols: [[
                                 {type: 'checkbox', fixed: 'left'}
                                 , {field: 'id', title: 'ID', fixed: 'left', unresize: true, sort: true}
