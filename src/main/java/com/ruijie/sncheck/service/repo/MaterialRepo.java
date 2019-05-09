@@ -19,4 +19,6 @@ public interface MaterialRepo {
     List<MaterialTableDto> findByExample(Example<MaterialTableDto> example);
 
     Optional<MaterialTableDto> findByBoxCodeAndSnCode(String boxCode, String sncode);
+
+    List<MaterialTableDto> save(List<MaterialTableDto> list);
 }

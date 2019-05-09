@@ -1,9 +1,11 @@
 package com.ruijie.sncheck.dao.po;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -29,7 +31,7 @@ public class MaterialTablePo {
     private String lastPrinter;
     private Timestamp lastPrintDate;
     private String lastPrintTime;
-    private Timestamp createDate;
+    private Date createDate;
     private String values1;
     private String values2;
     private String values3;
@@ -37,6 +39,7 @@ public class MaterialTablePo {
 
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public Integer getId() {
         return id;
     }
@@ -166,12 +169,13 @@ public class MaterialTablePo {
     }
 
     @Basic
-    @Column(name = "create_date", nullable = false)
-    public Timestamp getCreateDate() {
+    @Column(name = "create_date", nullable = true)
+    @CreatedDate
+    public Date getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Timestamp createDate) {
+    public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
 
