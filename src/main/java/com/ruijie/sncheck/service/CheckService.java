@@ -1,16 +1,18 @@
 package com.ruijie.sncheck.service;
 
 import com.ruijie.sncheck.common.error.ApiException;
-import com.ruijie.sncheck.common.util.CopySameObject;
+import com.ruijie.sncheck.common.util.ObjectUtil;
+import com.ruijie.sncheck.dao.po.MaterialTablePoPK;
+import com.ruijie.sncheck.service.entity.FinalString;
 import com.ruijie.sncheck.service.entity.MaterialTableDto;
 import com.ruijie.sncheck.service.repo.MaterialRepo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * CheckService
@@ -31,11 +33,28 @@ public class CheckService {
      * @return
      */
     public List<MaterialTableDto> materialList(MaterialTableDto dto, Pageable pageable){
-        Example<MaterialTableDto> example = Example.of(dto);
+
+        Example<MaterialTableDto> example = null;
+        try {
+            example = Example.of(ObjectUtil.setNullValue(dto));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         return materialRepo.findAll(example,pageable);
     }
 
+    public List<MaterialTableDto> findByExample(MaterialTableDto dto){
+
+        Example<MaterialTableDto> example = null;
+        try {
+            example = Example.of(ObjectUtil.setNullValue(dto));
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return materialRepo.findByExample(example);
+    }
     public List<MaterialTableDto> findBYBoxCode(String boxCode){
+        if(boxCode==""){boxCode=null;}
         MaterialTableDto dto = new MaterialTableDto();
         dto.setBoxCode(boxCode);
         Example<MaterialTableDto> example = Example.of(dto);
@@ -43,8 +62,9 @@ public class CheckService {
     }
 
     public MaterialTableDto findBySnCode(String sncode){
+        if(sncode==""){sncode=null;}
         MaterialTableDto dto = new MaterialTableDto();
-        dto.setBoxCode(sncode);
+        dto.setSnCode(sncode);
         Example<MaterialTableDto> example = Example.of(dto);
         List<MaterialTableDto> list = materialRepo.findByExample(example);
         if(list.size()>1){
@@ -55,23 +75,26 @@ public class CheckService {
         return list.get(0);
     }
 
-    public MaterialTableDto findByBoxCodeAndSnCode(String boxCode,String sncode){
-        return materialRepo.findByBoxCodeAndSnCode(boxCode,sncode).orElseThrow(()->ApiException.badRequest("不存在此任务"));
-    }
 
-    public MaterialTableDto findById(Integer id){
-        return materialRepo.findById(id).orElseThrow(()->ApiException.badRequest("不存在"));
+    public MaterialTableDto findById(String boxcode,String sncode){
+        MaterialTablePoPK pk = new MaterialTablePoPK();
+        if(StringUtils.isBlank(boxcode)){
+            boxcode= FinalString.DEFAULTBOSCODE;
+        }
+        pk.setBoxCode(boxcode);
+        pk.setSnCode(sncode);
+        return materialRepo.findById(pk).orElseThrow(()->ApiException.badRequest("任务不存在"));
     }
 
     public MaterialTableDto editMaterial(MaterialTableDto dto){
-        MaterialTableDto materialTableDto = materialRepo.findById(dto.getId()).orElseThrow(()->ApiException.badRequest("不存在"));
-        CopySameObject.mergeObject(dto,materialTableDto);
+        MaterialTableDto materialTableDto = findById(dto.getBoxCode(),dto.getSnCode());
+        ObjectUtil.mergeObject(dto,materialTableDto);
         return materialRepo.save(materialTableDto);
     }
 
 
-    public Boolean deleteMaterial(Integer id) {
-        MaterialTableDto materialTableDto = materialRepo.findById(id).orElseThrow(()->ApiException.badRequest("不存在"));
+    public Boolean deleteMaterial(String boxcode,String sncode) {
+        MaterialTableDto materialTableDto = findById(boxcode,sncode);
         return materialRepo.delete(materialTableDto);
     }
 }

@@ -2,6 +2,7 @@ package com.ruijie.sncheck.service.entity;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -12,10 +13,9 @@ import java.util.Date;
  */
 @Data
 public class MaterialTableDto {
-    private Integer id;
     private String materielCode;
     private String task;
-    private String boxCode;
+    private String boxCode="00000000";
     private String snCode;
     private String spareCode;
     private String attributeCode;
@@ -26,6 +26,7 @@ public class MaterialTableDto {
     private Date lastPrintDate;
     private String lastPrintTime;
     private Date createDate;
+    private Date updateDate;
     private String values1;
     private String values2;
     private String values3;

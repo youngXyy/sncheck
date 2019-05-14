@@ -1,5 +1,6 @@
 package com.ruijie.sncheck.service.repo;
 
+import com.ruijie.sncheck.dao.po.MaterialTablePoPK;
 import com.ruijie.sncheck.service.entity.MaterialTableDto;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public interface MaterialRepo {
 
     List<MaterialTableDto> batchsave(List<MaterialTableDto> list);
 
-    Optional<MaterialTableDto> findById(Integer id);
+    Optional<MaterialTableDto> findById(MaterialTablePoPK id);
 
     MaterialTableDto save(MaterialTableDto materialTableDto);
 

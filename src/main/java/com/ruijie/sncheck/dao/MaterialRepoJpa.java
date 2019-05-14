@@ -3,6 +3,7 @@ package com.ruijie.sncheck.dao;
 import com.ruijie.sncheck.common.util.CopyBean;
 import com.ruijie.sncheck.dao.jpa.MateriaRepository;
 import com.ruijie.sncheck.dao.po.MaterialTablePo;
+import com.ruijie.sncheck.dao.po.MaterialTablePoPK;
 import com.ruijie.sncheck.service.entity.MaterialTableDto;
 import com.ruijie.sncheck.service.repo.MaterialRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +61,9 @@ public class MaterialRepoJpa implements MaterialRepo {
     }
 
     @Override
-    public Optional<MaterialTableDto> findById(Integer id) {
-        return materiaRepository.findById(id).map(p->CopyBean.simpleCopy(p,MaterialTableDto.class));
+    public Optional<MaterialTableDto> findById(MaterialTablePoPK id) {
+        Optional<MaterialTablePo> entity = materiaRepository.findById(id);
+        return entity.map(po->CopyBean.simpleCopy(po,MaterialTableDto.class));
     }
 
     @Override

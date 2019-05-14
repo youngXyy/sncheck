@@ -35,43 +35,55 @@ public class CheckController {
     public RespVo<List<MaterialVo>> meterialList(MaterialVo vo,PageInfoVo pageInfoVo){
         MaterialTableDto dto = CopyBean.simpleCopy(vo,MaterialTableDto.class);
         List<MaterialTableDto> list = checkService.materialList(dto,pageInfoVo.pageableEntity());
-        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
+        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)
+        ).collect(Collectors.toList()));
     }
 
     @GetMapping
-    @RequestMapping("/meterial/{sncode}")
-    public RespVo<MaterialVo> findBySncode(@PathVariable("sncode") String sncode){
-        MaterialTableDto dto = checkService.findBySnCode(sncode);
-        return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
-    }
-
-    @GetMapping
-    @RequestMapping("/meterialList/{boxCode}")
-    public RespVo<List<MaterialVo>> findBYBoxCode(@PathVariable("boxCode") String boxcode){
-        List<MaterialTableDto> list = checkService.findBYBoxCode(boxcode);
-        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
-    }
-
-    @GetMapping
-    @RequestMapping("/meterial/{sncode}/{boxCode}")
-    public RespVo<MaterialVo> findByBoxCodeAndSnCode(@PathVariable("sncode") String sncode,@PathVariable("boxCode") String boxCode){
-        MaterialTableDto dto = checkService.findByBoxCodeAndSnCode(sncode,boxCode);
-        return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
-    }
-
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.PUT)
-    @ResponseBody
-    @PutMapping
-    public RespVo<MaterialVo> edit(@PathVariable("id") Integer id,@RequestParam MaterialVo vo){
+    @RequestMapping("/tocheck")
+    public RespVo<List<MaterialVo>> check(MaterialVo vo){
         MaterialTableDto dto = CopyBean.simpleCopy(vo,MaterialTableDto.class);
-        dto.setId(id);
+        List<MaterialTableDto> list = checkService.findByExample(dto);
+        if(list.size()==0||list==null){
+            return RespVo.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        if(list.size()>1){
+            return RespVo.status(HttpStatus.PARTIAL_CONTENT).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
+        }
+        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
+    }
+
+    @RequestMapping(value = "/meterial/check",method = RequestMethod.POST)
+    public RespVo<MaterialVo> check(@RequestParam String boxCode,@RequestParam String snCode){
+        MaterialTableDto dto = checkService.findById(boxCode,snCode);
+        return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
+    }
+
+//    @GetMapping
+//    @RequestMapping("/meterialList/{boxCode}")
+//    public RespVo<List<MaterialVo>> findBYBoxCode(@PathVariable("boxCode") String boxcode){
+//        List<MaterialTableDto> list = checkService.findBYBoxCode(boxcode);
+//        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
+//    }
+
+//    @GetMapping
+//    @RequestMapping("/meterial/{sncode}/{boxCode}")
+//    public RespVo<MaterialVo> findByBoxCodeAndSnCode(@PathVariable("sncode") String sncode,@PathVariable("boxCode") String boxCode){
+//        MaterialTableDto dto = checkService.findByBoxCodeAndSnCode(sncode,boxCode);
+//        return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
+//    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @GetMapping
+    public RespVo<MaterialVo> edit( MaterialVo vo){
+        MaterialTableDto dto = CopyBean.simpleCopy(vo,MaterialTableDto.class);
         return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(checkService.editMaterial(dto),MaterialVo.class));
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     @ResponseBody
-    public RespVo<Boolean> delete(@PathVariable("id") Integer id){
-        Boolean result = checkService.deleteMaterial(id);
+    public RespVo<Boolean> delete(@RequestParam String boxCode,@RequestParam String snCode){
+        Boolean result = checkService.deleteMaterial(boxCode,snCode);
         return RespVo.ok(result);
     }
 }

@@ -1,5 +1,6 @@
 package com.ruijie.sncheck.controller.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
@@ -12,21 +13,24 @@ import java.util.Date;
  */
 @Data
 public class MaterialVo {
-    private Integer id;
     private String materielCode;
     private String task;
     private String boxCode;
     private String snCode;
     private String spareCode;
     private String attributeCode;
-    private String printer;
-    private Date printDate;
-    private String printTimes;
-    private String lastPrinter;
-    private Date lastPrintDate;
-    /**
-     * 打印次数
-     */
-    private String lastPrintTime;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT+8")
+    private Date createDate;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT+8")
+    private Date updateDate;
+//    private String printer;
+//    private Date printDate;
+//    private String printTimes;
+//    private String lastPrinter;
+//    private Date lastPrintDate;
+//    /**
+//     * 打印次数
+//     */
+//    private String lastPrintTime;
 
 }

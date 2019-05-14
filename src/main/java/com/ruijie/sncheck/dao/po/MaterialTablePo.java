@@ -1,6 +1,7 @@
 package com.ruijie.sncheck.dao.po;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,13 +13,13 @@ import java.util.Objects;
  * MaterialTablePo
  *
  * @author {yuanwei}
- * @date 2019/5/6 22:01
+ * @date 2019/5/12 20:18
  */
 @Entity
 @Table(name = "material_table", schema = "ruijiesncheck", catalog = "")
+@IdClass(MaterialTablePoPK.class)
 @EntityListeners(AuditingEntityListener.class)
 public class MaterialTablePo {
-    private Integer id;
     private String materielCode;
     private String task;
     private String boxCode;
@@ -26,27 +27,17 @@ public class MaterialTablePo {
     private String spareCode;
     private String attributeCode;
     private String printer;
-    private Timestamp printDate;
+    private Date printDate;
     private String printTimes;
     private String lastPrinter;
-    private Timestamp lastPrintDate;
+    private Date lastPrintDate;
     private String lastPrintTime;
     private Date createDate;
+    private Date updateDate;
     private String values1;
     private String values2;
     private String values3;
     private String values4;
-
-    @Id
-    @Column(name = "id", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Basic
     @Column(name = "materiel_code", nullable = false, length = 255)
@@ -68,7 +59,7 @@ public class MaterialTablePo {
         this.task = task;
     }
 
-    @Basic
+    @Id
     @Column(name = "box_code", nullable = false, length = 64)
     public String getBoxCode() {
         return boxCode;
@@ -78,7 +69,7 @@ public class MaterialTablePo {
         this.boxCode = boxCode;
     }
 
-    @Basic
+    @Id
     @Column(name = "sn_code", nullable = false, length = 64)
     public String getSnCode() {
         return snCode;
@@ -120,11 +111,11 @@ public class MaterialTablePo {
 
     @Basic
     @Column(name = "print_date", nullable = true)
-    public Timestamp getPrintDate() {
+    public Date getPrintDate() {
         return printDate;
     }
 
-    public void setPrintDate(Timestamp printDate) {
+    public void setPrintDate(Date printDate) {
         this.printDate = printDate;
     }
 
@@ -150,11 +141,11 @@ public class MaterialTablePo {
 
     @Basic
     @Column(name = "last_print_date", nullable = true)
-    public Timestamp getLastPrintDate() {
+    public Date getLastPrintDate() {
         return lastPrintDate;
     }
 
-    public void setLastPrintDate(Timestamp lastPrintDate) {
+    public void setLastPrintDate(Date lastPrintDate) {
         this.lastPrintDate = lastPrintDate;
     }
 
@@ -169,7 +160,7 @@ public class MaterialTablePo {
     }
 
     @Basic
-    @Column(name = "create_date", nullable = true)
+    @Column(name = "create_date", nullable = false)
     @CreatedDate
     public Date getCreateDate() {
         return createDate;
@@ -177,6 +168,17 @@ public class MaterialTablePo {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    @Basic
+    @Column(name = "update_date", nullable = false)
+    @LastModifiedDate
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     @Basic
@@ -224,8 +226,7 @@ public class MaterialTablePo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MaterialTablePo that = (MaterialTablePo) o;
-        return id == that.id &&
-                Objects.equals(materielCode, that.materielCode) &&
+        return Objects.equals(materielCode, that.materielCode) &&
                 Objects.equals(task, that.task) &&
                 Objects.equals(boxCode, that.boxCode) &&
                 Objects.equals(snCode, that.snCode) &&
@@ -238,6 +239,7 @@ public class MaterialTablePo {
                 Objects.equals(lastPrintDate, that.lastPrintDate) &&
                 Objects.equals(lastPrintTime, that.lastPrintTime) &&
                 Objects.equals(createDate, that.createDate) &&
+                Objects.equals(updateDate, that.updateDate) &&
                 Objects.equals(values1, that.values1) &&
                 Objects.equals(values2, that.values2) &&
                 Objects.equals(values3, that.values3) &&
@@ -246,6 +248,6 @@ public class MaterialTablePo {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, materielCode, task, boxCode, snCode, spareCode, attributeCode, printer, printDate, printTimes, lastPrinter, lastPrintDate, lastPrintTime, createDate, values1, values2, values3, values4);
+        return Objects.hash(materielCode, task, boxCode, snCode, spareCode, attributeCode, printer, printDate, printTimes, lastPrinter, lastPrintDate, lastPrintTime, createDate, updateDate, values1, values2, values3, values4);
     }
 }
