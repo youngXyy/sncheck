@@ -54,11 +54,11 @@ public class CheckService {
         return materialRepo.findByExample(example);
     }
     public List<MaterialTableDto> findBYBoxCode(String boxCode){
-        if(boxCode==""){boxCode=null;}
-        MaterialTableDto dto = new MaterialTableDto();
-        dto.setBoxCode(boxCode);
-        Example<MaterialTableDto> example = Example.of(dto);
-        return materialRepo.findByExample(example);
+//        if(boxCode==""){boxCode=null;}
+//        MaterialTableDto dto = new MaterialTableDto();
+//        dto.setBoxCode(boxCode);
+//        Example<MaterialTableDto> example = Example.of(dto);
+        return materialRepo.findBYBoxCode(boxCode).orElseThrow(()->ApiException.badRequest("箱号不存在"));
     }
 
     public MaterialTableDto findBySnCode(String sncode){

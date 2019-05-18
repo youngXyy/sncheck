@@ -5,6 +5,7 @@ import com.ruijie.sncheck.dao.po.MaterialTablePoPK;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -15,4 +16,6 @@ import java.util.Optional;
  */
 public interface MateriaRepository extends JpaRepository<MaterialTablePo, MaterialTablePoPK>, JpaSpecificationExecutor<MaterialTablePo> {
     Optional<MaterialTablePo> findByBoxCodeAndSnCode(String boxCode, String sncode);
+
+    Optional<List<MaterialTablePo>> findByBoxCode(String boxCode);
 }

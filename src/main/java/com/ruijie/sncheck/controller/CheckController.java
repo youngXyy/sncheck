@@ -59,12 +59,12 @@ public class CheckController {
         return RespVo.status(HttpStatus.OK).body(CopyBean.simpleCopy(dto,MaterialVo.class));
     }
 
-//    @GetMapping
-//    @RequestMapping("/meterialList/{boxCode}")
-//    public RespVo<List<MaterialVo>> findBYBoxCode(@PathVariable("boxCode") String boxcode){
-//        List<MaterialTableDto> list = checkService.findBYBoxCode(boxcode);
-//        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
-//    }
+    @GetMapping
+    @RequestMapping( value ="/findByboxCode", method = RequestMethod.GET )
+    public RespVo<List<MaterialVo>> findBYBoxCode(@RequestParam String boxCode){
+        List<MaterialTableDto> list = checkService.findBYBoxCode(boxCode);
+        return RespVo.status(HttpStatus.OK).body(list.stream().map(d->CopyBean.simpleCopy(d,MaterialVo.class)).collect(Collectors.toList()));
+    }
 
 //    @GetMapping
 //    @RequestMapping("/meterial/{sncode}/{boxCode}")

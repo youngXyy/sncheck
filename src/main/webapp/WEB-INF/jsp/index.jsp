@@ -80,6 +80,7 @@
         <div class="SnTable" style="text-align: center">
             <button type="button" class="layui-btn" id="importFile"><i class="layui-icon"></i>上传文件</button>
         </div>
+        <div><a href="/sncheck/excelExport">导出Excel表格</a></div>
 
         <table class="layui-table" id="importT" lay-filter="">
           <%--  <thead>

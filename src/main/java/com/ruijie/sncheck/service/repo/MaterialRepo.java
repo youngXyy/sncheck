@@ -28,4 +28,6 @@ public interface MaterialRepo {
     MaterialTableDto save(MaterialTableDto materialTableDto);
 
     Boolean delete(MaterialTableDto materialTableDto);
+
+    Optional<List<MaterialTableDto>> findBYBoxCode(String boxCode);
 }

@@ -79,4 +79,10 @@ public class MaterialRepoJpa implements MaterialRepo {
         materiaRepository.delete(po);
         return true;
     }
+
+    @Override
+    public Optional<List<MaterialTableDto>> findBYBoxCode(String boxCode) {
+        Optional<List<MaterialTablePo>> po =materiaRepository.findByBoxCode(boxCode);
+        return po.map(ps->ps.stream().map(p->CopyBean.simpleCopy(p,MaterialTableDto.class)).collect(Collectors.toList()));
+    }
 }

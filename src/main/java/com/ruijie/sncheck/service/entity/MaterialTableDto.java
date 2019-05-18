@@ -15,7 +15,7 @@ import java.util.Date;
 public class MaterialTableDto {
     private String materielCode;
     private String task;
-    private String boxCode="00000000";
+    private String boxCode;
     private String snCode;
     private String spareCode;
     private String attributeCode;
@@ -31,5 +31,9 @@ public class MaterialTableDto {
     private String values2;
     private String values3;
     private String values4;
+    private Integer num;
+    private String oldBocCode;
+    private String powerCode;
+    private String productName;
 
 }

@@ -81,7 +81,7 @@
         <div class="SnTable" style="text-align: center">
             箱号：
             <div class="layui-inline">
-                <input class="layui-input" name="boxCode" id="boxCode" autocomplete="off">
+                <input class="layui-input" name="boxCode" id="boxCode"  autocomplete="off">
             </div>
             Sn序列号：
             <div class="layui-inline">
@@ -199,7 +199,7 @@
         $.ajax
         ({ //请求登录处理页
             type: "post",//请求方式 "POST" 或 "GET"， 默认为 "GET"
-            url: "/edit", //登录处理页
+            url: "/edit", //编辑修改
             dataType: "json",
             //传送请求数据
             data: $("#editForm").serializeArray(),
