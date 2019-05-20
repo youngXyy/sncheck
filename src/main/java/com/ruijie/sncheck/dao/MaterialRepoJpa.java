@@ -29,11 +29,11 @@ public class MaterialRepoJpa implements MaterialRepo {
     private MateriaRepository materiaRepository;
 
     @Override
-    public List<MaterialTableDto> findAll(Example<MaterialTableDto> example, Pageable pageable) {
+    public Page<MaterialTableDto> findAll(Example<MaterialTableDto> example, Pageable pageable) {
         MaterialTablePo po = CopyBean.simpleCopy(example.getProbe(),MaterialTablePo.class,"id");
         Example<MaterialTablePo> example1 = Example.of(po,example.getMatcher());
         Page<MaterialTablePo> page = materiaRepository.findAll(example1,pageable);
-        return page.stream().map(p->CopyBean.simpleCopy(p,MaterialTableDto.class)).collect(Collectors.toList());
+        return page.map(p->CopyBean.simpleCopy(p,MaterialTableDto.class));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MaterialRepoJpa implements MaterialRepo {
     @Override
     public List<MaterialTableDto> batchsave(List<MaterialTableDto> list) {
         List<MaterialTableDto> listDto = new ArrayList<>();
-        List<MaterialTablePo> listPo = list.stream().map(d->CopyBean.simpleCopy(d,MaterialTablePo.class)).collect(Collectors.toList());
+        List<MaterialTablePo> listPo = list.stream().map(d->CopyBean.simpleCopy(d,MaterialTablePo.class,"createDate","updateDate")).collect(Collectors.toList());
         for (MaterialTablePo po : listPo) {
             listDto.add(CopyBean.simpleCopy(materiaRepository.save(po),MaterialTableDto.class));
         }
@@ -84,5 +84,14 @@ public class MaterialRepoJpa implements MaterialRepo {
     public Optional<List<MaterialTableDto>> findBYBoxCode(String boxCode) {
         Optional<List<MaterialTablePo>> po =materiaRepository.findByBoxCode(boxCode);
         return po.map(ps->ps.stream().map(p->CopyBean.simpleCopy(p,MaterialTableDto.class)).collect(Collectors.toList()));
+    }
+
+    @Override
+    public Boolean batchDelete(List<MaterialTableDto> list) {
+        List<MaterialTablePo> listPo = list.stream().map(d->CopyBean.simpleCopy(d,MaterialTablePo.class)).collect(Collectors.toList());
+        for (MaterialTablePo po : listPo) {
+            materiaRepository.delete(po);
+        }
+        return true;
     }
 }

@@ -3,6 +3,7 @@ package com.ruijie.sncheck.service.repo;
 import com.ruijie.sncheck.dao.po.MaterialTablePoPK;
 import com.ruijie.sncheck.service.entity.MaterialTableDto;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.Optional;
  * @date 2019/5/6 22:19
  */
 public interface MaterialRepo {
-    List<MaterialTableDto> findAll(Example<MaterialTableDto> example, Pageable pageable);
+    Page<MaterialTableDto> findAll(Example<MaterialTableDto> example, Pageable pageable);
 
     List<MaterialTableDto> findByExample(Example<MaterialTableDto> example);
 
@@ -30,4 +31,6 @@ public interface MaterialRepo {
     Boolean delete(MaterialTableDto materialTableDto);
 
     Optional<List<MaterialTableDto>> findBYBoxCode(String boxCode);
+
+    Boolean batchDelete(List<MaterialTableDto> list);
 }

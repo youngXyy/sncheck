@@ -187,11 +187,11 @@
                 "attributeCode":attributeCode
             },
             type: 'post',
-            success: function(result) {
+            success: function(res) {
                 // Do something with the result
-                if(result.body==true){
-                    tiaoma(s)
-                    layer.msg("打印", {icon: 6});
+                if(res.body==true){
+                    tiaoma(attributeCode)
+                    layer.msg("打印成功", {icon: 6});
                 }else {
                     layer.msg("打印失败", {icon: 5});
                 }
@@ -287,7 +287,7 @@
                     var data=res.body;
                     // $(data.attributeCode).css('background-color','#FFFF00');
                     var tr =document.getElementById(data.attributeCode).style.background="yellow";
-                    tiaoma(data.attributeCode);
+                    myprint(data.attributeCode);
                     if(total==checkNum){
                         $("#boxCode").val("").focus()
                         $("#snCode").val("")

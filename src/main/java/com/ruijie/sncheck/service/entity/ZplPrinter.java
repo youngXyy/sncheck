@@ -14,22 +14,16 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.print.attribute.standard.PrinterName;
 
-/**
- * ZplPrinter
- *
- * @author {yuanwei}
- * @date 2019/5/16 21:46
- */
 public class ZplPrinter {
     private String printerURI = null;//打印机完整路径
     private PrintService printService = null;//打印机服务
     private byte[] dotFont;
-    private String begin = "^XA";   //标签格式以^XA开始
-    private String end = "^XZ";     //标签格式以^XZ结束
+    private String begin = "^XA";	//标签格式以^XA开始
+    private String end = "^XZ";		//标签格式以^XZ结束
     private String content = "";
 
     public static void main(String[] args) {
-        ZplPrinter p = new ZplPrinter("\\\\192.168.0.12\\ZDesigner 105SLPlus-300dpi ZPL");
+        ZplPrinter p = new ZplPrinter("yw");
         //1.打印单个条码
         String bar0 = "1234567890";//条码内容
         String bar0Zpl = "^FO110,110^BY6,3.0,280^BCN,,Y,N,N^FD${data}^FS";//条码样式模板
@@ -38,6 +32,43 @@ public class ZplPrinter {
         System.out.println(zpl);
         boolean result1 = p.print(zpl);//打印
 
+        p.resetZpl();//注意要清除上次的打印信息
+        //2.打印中、英、数字、条码混合
+        //左边的条码
+        String bar1 = "07";
+        p.setChar(bar1, 190, 130, 60, 60);
+        String bar1Zpl = "^FO100,200^BY8,3.0,240^BCR,,N,N,N^FD${data}^FS";//条码样式模板
+        p.setBarcode(bar1,bar1Zpl);
+        //下边的条码
+        String bar2 = "00000999990018822969";//20位
+        String bar2Paper = "^FO380,600^BY3,3.0,100^BCN,,Y,N,N^FD${data}^FS";//条码样式模板
+        p.setBarcode(bar2,bar2Paper);
+
+        p.setText("国药控股湖南有限公司", 380, 40, 60, 60, 30, 2, 2, 24);
+        p.setChar("CSS0BPKPPR", 380, 100, 60, 60);
+
+        p.setText("09件",940, 80, 60, 60, 30, 2, 2, 24);
+        p.setText("补", 1100, 80, 60, 60, 30, 2, 2, 24);
+
+        p.setText("公司自配送 公路", 380, 180, 80, 80, 30, 3, 3, 24);
+        p.setChar("03231151",940, 187, 40, 40);
+        p.setChar("2015-10-10",940, 227, 30, 30);
+
+        p.setText("湖南六谷大药房连锁有限公司", 380, 260, 60, 60, 30, 2, 2, 24);
+
+        p.setText("长沙市开福区捞刀河镇中岭村258号", 380, 320, 60, 60, 30, 2, 2, 22);
+
+        p.setText("多SKU", 800, 485, 60, 60, 30, 2, 2, 24);
+
+        p.setText("库位:49", 380, 420, 56, 56, 30, 2, 2, 24);
+        p.setText("品类:感冒胶囊", 380, 485, 56, 56, 30, 2, 2, 24);
+
+        p.setText("批号:", 380, 550, 56, 56, 30, 2, 2, 24);
+        p.setChar("78787878788", 500, 560, 40, 40);
+
+        String zpl2 = p.getZpl();
+        System.out.println(zpl2);
+        boolean result2 = p.print(zpl2);
     }
 
     /**
@@ -47,7 +78,7 @@ public class ZplPrinter {
     public ZplPrinter(String printerURI){
         this.printerURI = printerURI;
         //加载字体
-        File file = new File("C://ts24.lib");
+        File file = new File("F://ts24.lib");
         if(file.exists()){
             FileInputStream fis;
             try {
@@ -59,7 +90,7 @@ public class ZplPrinter {
                 e.printStackTrace();
             }
         }else{
-            System.out.println("C://ts24.lib文件不存在");
+            System.out.println("ts24.lib文件不存在");
         }
         //初始化打印机
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null,null);
@@ -135,7 +166,7 @@ public class ZplPrinter {
     /**
      * 英文字符串(包含数字)
      * @param str 英文字符串
-     * @param x x坐标
+     * @param x	x坐标
      * @param y y坐标
      * @param h 高度
      * @param w 宽度
@@ -146,7 +177,7 @@ public class ZplPrinter {
     /**
      * 英文字符(包含数字)顺时针旋转90度
      * @param str 英文字符串
-     * @param x x坐标
+     * @param x	x坐标
      * @param y y坐标
      * @param h 高度
      * @param w 宽度

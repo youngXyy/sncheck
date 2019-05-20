@@ -9,9 +9,11 @@ import com.ruijie.sncheck.service.repo.MaterialRepo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +27,9 @@ public class CheckService {
 
     @Autowired
     private MaterialRepo materialRepo;
+    @Autowired
+    private PrinterService printerService;
+
 
     /**
      * 查询列表
@@ -32,7 +37,7 @@ public class CheckService {
      * @param pageable
      * @return
      */
-    public List<MaterialTableDto> materialList(MaterialTableDto dto, Pageable pageable){
+    public Page<MaterialTableDto> materialList(MaterialTableDto dto, Pageable pageable){
 
         Example<MaterialTableDto> example = null;
         try {
@@ -76,11 +81,14 @@ public class CheckService {
     }
 
 
+    public MaterialTableDto snCheck(String boxcode,String sncode){
+        MaterialTableDto dto = findById(boxcode,sncode);
+        printerService.printBarCode(dto.getAttributeCode());
+        return dto;
+    }
+
     public MaterialTableDto findById(String boxcode,String sncode){
         MaterialTablePoPK pk = new MaterialTablePoPK();
-        if(StringUtils.isBlank(boxcode)){
-            boxcode= FinalString.DEFAULTBOSCODE;
-        }
         pk.setBoxCode(boxcode);
         pk.setSnCode(sncode);
         return materialRepo.findById(pk).orElseThrow(()->ApiException.badRequest("任务不存在"));
@@ -96,5 +104,17 @@ public class CheckService {
     public Boolean deleteMaterial(String boxcode,String sncode) {
         MaterialTableDto materialTableDto = findById(boxcode,sncode);
         return materialRepo.delete(materialTableDto);
+    }
+
+    public Boolean batchDelete(List<String> boxCodes, List<String> snCodes) {
+        List<MaterialTableDto> list = new ArrayList();
+        for (int i = 0; i < boxCodes.size(); i++) {
+            String boxCode =  boxCodes.get(i);
+            String snCode = snCodes.get(i);
+            MaterialTableDto materialTableDto = findById(boxCode,snCode);
+            list.add(materialTableDto);
+        }
+
+        return materialRepo.batchDelete(list);
     }
 }

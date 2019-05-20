@@ -17,8 +17,8 @@ import java.io.Serializable;
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PageInfoVo implements Serializable {
-    private Integer pageSize = 20;
-    private Integer pageIndex = 1;
+    private Integer limit = 20;
+    private Integer page = 1;
     private Integer totalPage;
     private boolean isMore = false;
     private Long totalElement;
@@ -34,7 +34,7 @@ public class PageInfoVo implements Serializable {
     private Pageable getPageable() {
         if (this.pageable==null) {
             Pageable newPageable;
-            newPageable = PageRequest.of(pageIndex>1?pageIndex-1:0, pageSize);
+            newPageable = PageRequest.of(page>1?page-1:0, limit);
             this.pageable = newPageable;
         }
 
@@ -43,8 +43,8 @@ public class PageInfoVo implements Serializable {
 
     public void setPageable(Pageable pageable) {
         this.pageable = pageable;
-        pageSize = pageable.getPageSize();
-        pageIndex =pageable.getPageNumber()+1;
+        limit = pageable.getPageSize();
+        page =pageable.getPageNumber()+1;
     }
 
     public Pageable pageableEntity() {

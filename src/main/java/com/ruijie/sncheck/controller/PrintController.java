@@ -18,7 +18,7 @@ public class PrintController {
 
     @RequestMapping(value = "/print", method = RequestMethod.POST)
     @ResponseBody
-    public RespVo<Boolean> delete(@RequestParam String attributeCode){
+    public RespVo<Boolean> print(@RequestParam String attributeCode){
         Boolean result = printerService.printBarCode(attributeCode);
         return RespVo.ok(result);
     }
