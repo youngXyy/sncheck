@@ -34,7 +34,7 @@
         <div class="layui-logo">Sn-扫码</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">控制台</a></li>
+            <li class="layui-nav-item"><a href="javascript:;">控制台</a></li>
             <li class="layui-nav-item">
                 <a href="javascript:;">其它系统</a>
                 <dl class="layui-nav-child">
@@ -80,6 +80,7 @@
         <div class="SnTable" style="text-align: center">
             <button type="button" class="layui-btn" id="importFile"><i class="layui-icon"></i>上传文件</button>
         </div>
+        <div><a href="/sncheck/excelExport">导出Excel表格</a></div>
 
         <table class="layui-table" id="importT" lay-filter="">
           <%--  <thead>
@@ -127,7 +128,7 @@
             elem: '#importFile'
             , url: '/sncheck/upload'
             , accept: 'file' //普通文件
-            , exts: 'xls|xlsx' //只允许上传压缩文件
+            , exts: 'xls|xlsx' //只允许上传excel文件
             ,before:function (obj) {
                 layer.load(1);
             }

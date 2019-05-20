@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * SncheckExcelService
@@ -44,7 +46,7 @@ public class SncheckExcelService {
      */
     public List<MaterialTableDto> sncheckExcel(MultipartFile file){
 
-        List<MaterialTableDto> list = new ArrayList<>();
+        List<MaterialTableDto> list1 = new ArrayList<>();
         if (file == null) {
             throw ApiException.badRequest( "对象不能为空");
         }
@@ -67,7 +69,8 @@ public class SncheckExcelService {
             //获取所有的工作表的的数量
             int numOfSheet = workbook.getNumberOfSheets();
             //遍历这些表
-            for (int i = 0; i < numOfSheet; i++) {
+            Map<String,List<MaterialTableDto>> map = new HashMap();
+            for (int i = 1; i < numOfSheet; i++) {
                 //获取一个sheet也就是一个工作簿
                 Sheet sheet = workbook.getSheetAt(i);
                 int lastRowNum = sheet.getLastRowNum();
@@ -75,43 +78,76 @@ public class SncheckExcelService {
                 for (int j = 1; j <= lastRowNum; j++) {
                     Row row = sheet.getRow(j);
                     MaterialTableDto dto = new MaterialTableDto();
-                    //物料编码
+                    //箱号
+                    if (row.getCell(0) != null) {
+                        row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+                        dto.setOldBocCode(row.getCell(0).getStringCellValue());
+                    }
+                    //sn序列号
                     if (row.getCell(1) != null) {
                         row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setMaterielCode(row.getCell(1).getStringCellValue());
+                        dto.setSnCode(row.getCell(1).getStringCellValue());
                     }
-                    //任务
+                    //物料编码
                     if (row.getCell(2) != null) {
                         row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setTask(row.getCell(2).getStringCellValue());
+                        dto.setMaterielCode(row.getCell(2).getStringCellValue());
                     }
-                    //箱号
+                    //产品名称
                     if (row.getCell(3) != null) {
                         row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setBoxCode(row.getCell(3).getStringCellValue());
+                        dto.setProductName(row.getCell(3).getStringCellValue());
                     }
-                    //扫码SN
+                    //电源线料号
                     if (row.getCell(4) != null) {
                         row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setSnCode(row.getCell(4).getStringCellValue());
-                    }
-                    //备料单号
-                    if (row.getCell(5) != null) {
-                        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setSpareCode(row.getCell(5).getStringCellValue());
+                        dto.setPowerCode(row.getCell(4).getStringCellValue());
                     }
                     //属性号
-                    if (row.getCell(6) != null) {
-                        row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
-                        dto.setAttributeCode(row.getCell(6).getStringCellValue());
+                    if (row.getCell(5) != null) {
+                        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
+                        dto.setAttributeCode(row.getCell(5).getStringCellValue());
                     }
-                    list.add(dto);
+                    //任务
+                    if(row.getCell(6) != null){
+                        row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
+                        dto.setTask(row.getCell(6).getStringCellValue());
+                    }
+                    //备料单号
+                    if (row.getCell(7) != null) {
+                        row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
+                        dto.setSpareCode(row.getCell(7).getStringCellValue());
+                    }
+
+                    if(map.get(row.getCell(0).getStringCellValue())==null){
+                        row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+                        List<MaterialTableDto> list = new ArrayList<>();
+                        map.put(row.getCell(0).getStringCellValue(), list);
+                        list.add(dto);
+                    }else {
+                        row.getCell(0).setCellType(Cell.CELL_TYPE_STRING);
+                        map.get(row.getCell(0).getStringCellValue()).add(dto);
+                    }
+
                 }
             }
+            for (List<MaterialTableDto> value : map.values()) {
+                for (MaterialTableDto dto : value) {
+                    dto.setNum(value.size());
+                    dto.setBoxCode(dto.getOldBocCode());
+                    if(value.size()==1){
+                        dto.setBoxCode(dto.getSnCode());
+                    }
+                }
+                list1.addAll(value);
+            }
         }
-        if(list.size()==0){
+        if(list1.size()==0){
             throw ApiException.badRequest("没有数据");
         }
-        return materialRepo.batchsave(list);
+        return materialRepo.batchsave(list1);
     }
+
+
+
 }

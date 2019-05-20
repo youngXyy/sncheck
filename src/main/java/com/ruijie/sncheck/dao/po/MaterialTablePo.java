@@ -38,6 +38,30 @@ public class MaterialTablePo {
     private String values2;
     private String values3;
     private String values4;
+    private Integer num;
+    private String oldBocCode;
+    private String powerCode;
+    private String productName;
+
+    @Basic
+    @Column(name = "power_code", nullable = false, length = 64)
+    public String getPowerCode() {
+        return powerCode;
+    }
+
+    public void setPowerCode(String powerCode) {
+        this.powerCode = powerCode;
+    }
+
+    @Basic
+    @Column(name = "product_name", nullable = false, length = 64)
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
     @Basic
     @Column(name = "materiel_code", nullable = false, length = 255)
@@ -221,6 +245,28 @@ public class MaterialTablePo {
         this.values4 = values4;
     }
 
+
+    @Basic
+    @Column(name = "num", nullable = true, length = 255)
+    public Integer getNum() {
+        return num;
+    }
+
+    public void setNum(Integer num) {
+        this.num = num;
+    }
+
+
+    @Basic
+    @Column(name = "old_box_code", nullable = true, length = 255)
+    public String getOldBocCode() {
+        return oldBocCode;
+    }
+
+    public void setOldBocCode(String oldBocCode) {
+        this.oldBocCode = oldBocCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -243,11 +289,15 @@ public class MaterialTablePo {
                 Objects.equals(values1, that.values1) &&
                 Objects.equals(values2, that.values2) &&
                 Objects.equals(values3, that.values3) &&
-                Objects.equals(values4, that.values4);
+                Objects.equals(values4, that.values4) &&
+                Objects.equals(num, that.num) &&
+                Objects.equals(oldBocCode, that.oldBocCode) &&
+                Objects.equals(powerCode, that.powerCode) &&
+                Objects.equals(productName, that.productName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(materielCode, task, boxCode, snCode, spareCode, attributeCode, printer, printDate, printTimes, lastPrinter, lastPrintDate, lastPrintTime, createDate, updateDate, values1, values2, values3, values4);
+        return Objects.hash(materielCode, task, boxCode, snCode, spareCode, attributeCode, printer, printDate, printTimes, lastPrinter, lastPrintDate, lastPrintTime, createDate, updateDate, values1, values2, values3, values4, num, oldBocCode, powerCode, productName);
     }
 }

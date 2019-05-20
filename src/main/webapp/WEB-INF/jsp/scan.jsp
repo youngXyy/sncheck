@@ -63,10 +63,10 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
                 <li class="layui-nav-item">
-                    <a  href="/page/import">Sn数据导入</a>
+                    <a  href="/page/import">Sn数据处理</a>
                 </li>
                 <li class="layui-nav-item layui-this">
-                    <a  href="/page/toScan">Sn扫码</a>
+                    <a  href="/page/toScan">设备管理</a>
                 </li>
                 <li class="layui-nav-item ">
                     <a  href="/page/toWork">SN工作台</a>
@@ -77,34 +77,24 @@
 
 
     <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div class="SnTable" style="text-align: center">
+
+        <div class="demoTable">
             箱号：
             <div class="layui-inline">
-                <input class="layui-input" name="boxCode" id="boxCode" autocomplete="off">
+                <input class="layui-input" name="boxCode" id="boxCode"  autocomplete="off">
             </div>
             Sn序列号：
             <div class="layui-inline">
                 <input class="layui-input" name="snCode" id="snCode" autocomplete="off">
             </div>
-            <button class="layui-btn" onclick="toScan()">搜索</button>
+            <button class="layui-btn" data-type="reload">搜索</button>
         </div>
-        <table class="layui-table" id="snT" lay-filter="">
-            <thead>
-            <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-            <th>物料编码</th>
-            <th>任务</th>
-            <th>箱号</th>
-            <th>sn编码</th>
-            <th>备料号</th>
-            <th>属性号</th>
-            <th>创建时间</th>
-            <th>更新时间</th>
-            <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}">操作</th>
-            </thead>
-            <tbody>
-
-            </tbody>
+        <div class="layui-btn-group demoTable">
+            <button class="layui-btn" data-type="batchDelete">删除选择数据</button>
+            <button type="button" class="layui-btn" id="importFile"><i class="layui-icon"></i>上传文件</button>
+            <button class="layui-btn"  data-type="exportExcel">导出数据</button>
+        </div>
+        <table class="layui-table" id="snT" lay-filter="demo">
 
         </table>
     </div>
@@ -150,6 +140,18 @@
                         <input type="text" name="attributeCode"  required  lay-verify="required" autocomplete="off" placeholder="属性号" class="layui-input">
                     </div>
                 </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">电源线料号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="powerCode"  required  lay-verify="required" autocomplete="off" placeholder="电源线料号" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">产品名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="productName"  required  lay-verify="required" autocomplete="off" placeholder="产品名称" class="layui-input">
+                    </div>
+                </div>
 
                 <div class="layui-form-item" style="margin-top:40px">
                     <div class="layui-input-block">
@@ -167,7 +169,6 @@
     © Ruijie
 </div>
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
     <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
@@ -176,6 +177,188 @@
     //JavaScript代码区域
     layui.use('element', function () {
         var element = layui.element;
+    });
+    layui.use('upload', function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        upload.render({ //允许上传的文件后缀
+            elem: '#importFile'
+            , url: '/sncheck/upload'
+            , accept: 'file' //普通文件
+            , exts: 'xls|xlsx' //只允许上传excel文件
+            ,before:function (obj) {
+                layer.load(1);
+            }
+            , done: function (res) {
+                if (res.status == 201) {
+                    layer.closeAll('loading');
+                    layer.msg("导入成功！", {icon: 6, time: 1000,});
+                    location.reload();
+                }
+            }
+            ,error: function(index, upload){
+                layer.closeAll('loading'); //关闭loading
+            }
+        });
+    });
+
+    layui.use('table', function(){
+        var table = layui.table;
+
+        //监听表格复选框选择
+        table.on('checkbox(demo)', function(obj){
+            console.log(obj)
+        });
+        //监听工具条
+        table.on('tool(demo)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'detail'){
+                layer.msg('ID：'+ data.id + ' 的查看操作');
+            } else if(obj.event === 'del'){
+                layer.confirm('真的删除行么', function(index){
+                    $.ajax({
+                        url: '/delete?boxCode='+data.boxCode+'&snCode='+data.snCode,
+                        type: 'DELETE',
+                        success: function(result) {
+                            // Do something with the result
+                            if(result.status==0){
+                                layer.msg("删除成功", {icon: 6});
+                                obj.del();
+                            }else {
+                                layer.msg("删除失败", {icon: 5});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                $("input[name='materielCode']").val(data.materielCode)
+                //任务
+                $("input[name='task']").val(data.task)
+                //箱号
+                $("input[name='boxCode']").val(data.boxCode)
+
+                //sn编码
+                $("input[name='snCode']").val(data.snCode)
+
+                //备料号
+                $("input[name='spareCode']").val(data.spareCode)
+
+                //属性号
+                $("input[name='attributeCode']").val(data.attributeCode)
+
+                //电源线料号
+                $("input[name='powerCode']").val(data.powerCode)
+
+                //产品名称
+                $("input[name='productName']").val(data.productName)
+
+                layer.open({
+                    //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
+                    type: 1,
+                    title: "修改设备信息",
+                    area: ['500px', '400px'],
+                    content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
+
+                });
+            }
+        });
+        table.render({
+            elem: '#snT'
+            ,url:'/meterialList'
+            ,toolbar: true
+            ,title: '产品入库表'
+            ,totalRow: true
+            ,height: 'full-200'
+            ,cols: [[
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'boxCode', title: '箱号'}
+                    , {field: 'snCode', title: 'sn序列号'}
+                    , {field: 'materielCode', title: '物料编码', edit: 'text'}
+                    , {field: 'productName', title: '产品名称', edit: 'text', sort: true}
+                    , {field: 'powerCode', title: '电源料号', edit: 'text', sort: true}
+                    , {field: 'attributeCode', title: '属性号', edit: 'text', sort: true}
+                    , {field: 'task', title: '任务', edit: 'text', sort: true}
+                    , {field: 'spareCode', title: '备料单号', edit: 'text', sort: true}
+                    , {field: 'num', title: '入库数', edit: 'text', sort: true}
+                    , {field: 'updateDate', title: '更新时间', sort: true}
+                    , {field: 'createDate', title: '创建时间',sort: true}
+                    , {fixed: 'right',title: '操作', toolbar: '#barDemo'}
+                ]]
+            ,page: true
+            ,response: {
+                statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+            }
+            ,parseData: function(res){
+                // var data=res.body;
+                // var reslt,total;
+                // //将原始数据解析成 table 组件所规定的数据
+                // $.each(data,function (index, item){
+                //     reslt=it
+                // });
+                return {
+                    "code": res.status, //解析接口状态
+                    "msg": res.message, //解析提示文本
+                    "count": res.body.pageInfo.totalElement, //解析数据长度
+                    "data": res.body.results //解析数据列表
+                };
+            }
+        });
+        var $ = layui.$, active = {
+            batchDelete: function(){ //删除选中数据
+                var checkStatus = table.checkStatus('snT')
+                    ,data = checkStatus.data,boxCodes="",snCodes="";
+                layer.confirm('真的删除删除所选行吗', function(index){
+                    $.each(data,function (index, item) {
+                        if(index==0){
+                            boxCodes+="boxCodes="+item.boxCode;
+                            snCodes+="&snCodes="+item.snCode;
+                        }else {
+                            boxCodes+="&boxCodes="+item.boxCode;
+                            snCodes+="&snCodes="+item.snCode;
+                        }
+                    })
+                    $.ajax({
+                        url: '/batchDelete?'+boxCodes+snCodes,
+                        type: 'delete',
+                        success: function(result) {
+                            // Do something with the result
+                            if(result.status==0){
+                                layer.msg("删除成功", {icon: 6});
+                                location.reload();
+                            }else {
+                                layer.msg("删除失败", {icon: 5});
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+
+            }
+            ,exportExcel: function(){ //验证是否全选
+
+                const a = document.createElement('a'); // 创建a标签
+                a.setAttribute('download', '');// download属性
+                a.setAttribute('href', '/sncheck/excelExport?boxCode='+$('#boxCode').val()+'&snCode='+$('#snCode').val());
+                console.log('/sncheck/excelExport?boxCode='+$('#boxCode').val()+'&snCode='+$('#snCode').val())// href链接
+                a.click();// 自执行点击事件
+            }
+            ,reload: function(){
+                var boxCode = $('#boxCode');
+                var snCode = $('#snCode');
+                table.reload('snT', {
+                    where: {
+                        boxCode: boxCode.val(),
+                        snCode : snCode.val()
+                    }
+                });
+            }
+        };
+
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
     });
 
     $.fn.serializeObject = function()
@@ -199,7 +382,7 @@
         $.ajax
         ({ //请求登录处理页
             type: "post",//请求方式 "POST" 或 "GET"， 默认为 "GET"
-            url: "/edit", //登录处理页
+            url: "/edit", //编辑修改
             dataType: "json",
             //传送请求数据
             data: $("#editForm").serializeArray(),
@@ -208,127 +391,9 @@
                     layer.msg("修改成功", {icon: 6});
                 }
             }
-
         });
         layer.close($("#popUpdateTest"));
-        // toScan()
-
-    }
-
-
-
-    function deletesn(boxCode,snCode) {
-        layer.confirm('真的删除行么', function(index){
-            $.ajax({
-                url: '/delete?boxCode='+boxCode+'&snCode='+snCode,
-
-                type: 'DELETE',
-                success: function(result) {
-                    // Do something with the result
-                    if(result.status==0){
-                        layer.msg("删除成功", {icon: 6});
-                    }else {
-                        layer.msg("删除失败", {icon: 5});
-                    }
-                    toScan()
-                }
-            });
-            layer.close(index);
-        });
-    }
-
-    function editsn(boxCode,snCode) {
-
-        $.ajax({
-            type:"POST",
-            url:"/meterial/check",
-            async:true,
-            data:{
-                "boxCode":boxCode,
-                "snCode":snCode
-            },
-
-            success:function (res) {
-                if (res.status==200){
-                    var data=res.body;
-                    //物料编号
-                    $("input[name='materielCode']").val(data.materielCode)
-                    //任务
-                    $("input[name='task']").val(data.task)
-                    //箱号
-                    $("input[name='boxCode']").val(data.boxCode)
-
-                    //sn编码
-                    $("input[name='snCode']").val(data.snCode)
-
-                    //备料号
-                    $("input[name='spareCode']").val(data.spareCode)
-
-                    //属性号
-                    $("input[name='attributeCode']").val(data.attributeCode)
-
-                }
-            }
-
-        });
-        layer.open({
-            //layer提供了5种层类型。可传入的值有：0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            type: 1,
-            title: "修改设备信息",
-            area: ['420px', '330px'],
-            content: $("#popUpdateTest")//引用的弹出层的页面层的方式加载修改界面表单
-
-        });
-
-    }
-
-    function toScan() {
-        var boxCode=$("#boxCode").val();
-        var snCode=$("#snCode").val();
-        $.ajax({
-            url:"/meterialList",
-            type:"POST",
-            data:{
-                "boxCode":boxCode,
-                "snCode":snCode
-            },
-            beforeSend:function(obj){
-                layer.load(1);
-            },
-            success:function (res) {
-                if (res.status=200){
-                    layer.closeAll('loading');
-                    $("#snT tbody").empty();
-                    var data=res.body;
-                    $.each(data,function (index, item) {
-
-                        //物料编号
-                        var materielCode = $("<td></td>").append(item.materielCode);
-                        //任务
-                        var task = $("<td></td>").append(item.task);
-                        //箱号
-                        var boxCode = $("<td></td>").append(item.boxCode);
-                        //sn编码
-                        var snCode = $("<td></td>").append(item.snCode);
-                        //备料号
-                        var spareCode = $("<td></td>").append(item.spareCode);
-                        //属性号
-                        var attributeCode = $("<td></td>").append(item.attributeCode);
-                        //创建时间
-                        var createDate = $("<td></td>").append(item.createDate);
-                        //修改时间
-                        var updateDate = $("<td></td>").append(item.updateDate);
-
-                        $("<tr></tr>").append($("<td></td>")).append(materielCode).append(task).append(boxCode).append(snCode).append(spareCode)
-                            .append(attributeCode).append(createDate).append(updateDate).append("<a class=\"layui-btn layui-btn-xs\" onclick= editsn("+item.boxCode+","+item.snCode+")>编辑</a>\n" +
-                            "    <a class=\"layui-btn layui-btn-danger layui-btn-xs\" onclick= deletesn("+item.boxCode+","+item.snCode+")>删除</a>").appendTo("#snT tbody");
-                    })
-
-
-                }
-            }
-        })
-    }
+    };
 </script>
 
 </body>
